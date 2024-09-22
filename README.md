@@ -1,5 +1,5 @@
 # shopping
-
+<!-- vue2练习 -->
 ## Project setup
 ```
 npm install
