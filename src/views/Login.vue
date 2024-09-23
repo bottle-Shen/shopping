@@ -60,33 +60,7 @@ export default {
       this.picKey = key
 
       //   Toast('获取图标验证码成功') 1.导入引用
-      this.$toast('获取图标验证码成功')// 2.main.js 注册绑定到原型,通过this直接调用
-    },
-    async getCode () {
-      // 请求倒计时前进行校验
-      if (!this.validFn()) {
-        return false
-      }
-      if (!this.timer && this.second === this.totalSecond) {
-        // 发送请求，获取验证码
-        await getMsgCode(this.picCode, this.picKey, this.mobile)
-        this.$toast('发送成功，请注意查收')
-        // 开启倒计时
-        this.timer = setInterval(() => {
-          this.second--
-          if (this.second < 1) {
-            clearInterval(this.timer)
-            this.timer = null
-            this.second = this.totalSecond
-          }
-        }, 1000)
-        // 发送请求，获取验证码
-        this.$toast('发送成功，请注意查收')
-      }
-    },
-    // 离开页面销毁定时器
-    destroyed () {
-      clearInterval(this.timer)
+      // this.$toast('获取图标验证码成功')// 2.main.js 注册绑定到原型,通过this直接调用
     },
     // 校验 手机号 和 图形验证码 是否合法
     // 通过校验，返回true
@@ -102,6 +76,30 @@ export default {
       }
       return true
     },
+    // 获取短信验证码
+    async getCode () {
+      // 请求倒计时前进行校验
+      if (!this.validFn()) {
+        return false
+      }
+      // 当前目前没有定时器开着，且 totalSecond 和 second 一致 (秒数归位) 才可以倒计时
+      if (!this.timer && this.second === this.totalSecond) {
+        // 发送请求，获取验证码
+        await getMsgCode(this.picCode, this.picKey, this.mobile)
+        this.$toast('发送成功，请注意查收')
+        // 开启倒计时
+        this.timer = setInterval(() => {
+          this.second--
+          if (this.second <= 0) {
+            clearInterval(this.timer)
+            this.timer = null
+            this.second = this.totalSecond
+          }
+        }, 1000)
+        // 发送请求，获取验证码
+        // this.$toast('发送成功，请注意查收')
+      }
+    },
     // 登录
     async login () {
       if (!this.validFn()) {
@@ -111,11 +109,21 @@ export default {
         this.$toast('请输入正确的手机验证码')
         return false
       }
+      // console.log('发送登录请求')
       const res = await codeLogin(this.mobile, this.msgCode)
       this.$store.commit('user/setUserInfo', res.data)
-      this.$router.push('/')
+      // this.$router.push('/')
       this.$toast('登录成功')
+      // 进行判断，看地址栏有无回跳地址
+      // 1. 如果有   => 说明是其他页面，拦截到登录来的，需要回跳
+      // 2. 如果没有 => 正常去首页
+      const url = this.$route.query.backUrl || '/'
+      this.$router.replace(url)
     }
+  },
+  // 离开页面销毁定时器
+  destroyed () {
+    clearInterval(this.timer)
   }
 }
 </script>

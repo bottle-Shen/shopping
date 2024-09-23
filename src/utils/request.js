@@ -2,6 +2,7 @@
 // 封装axios用于发送请求
 import axios from 'axios'
 import { Toast } from 'vant'
+import store from '@/store'
 // 创建一个新的axios实例
 const request = axios.create({
   // https://apifox.com/apidoc/shared-12ab6b18-adc2-444c-ad11-0e60f5693f66/doc-2221080
@@ -27,6 +28,11 @@ request.interceptors.request.use(function (config) {
     loadingType: 'spinner',
     duration: 0
   })
+  const token = store.getters.token
+  if (token) {
+    config.headers['Access-Token'] = token
+    config.headers.platform = 'H5'
+  }
   return config
 }, function (error) {
   // 对请求错误做些什么

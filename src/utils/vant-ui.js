@@ -1,6 +1,6 @@
 import Vue from 'vue'
 // 按需引入
-import { ActionSheet, Lazyload, Rate, Search, Swipe, SwipeItem, Grid, GridItem, Button, Icon, Tabbar, TabbarItem, NavBar, Toast } from 'vant'
+import { Switch, Tab, Tabs, Checkbox, Dialog, ActionSheet, Lazyload, Rate, Search, Swipe, SwipeItem, Grid, GridItem, Button, Icon, Tabbar, TabbarItem, NavBar, Toast } from 'vant'
 import 'vant/lib/index.css' // 引入 Vant 的样式文件
 import 'vant/lib/icon/local.css' // 引入 Vant 的图标库
 
@@ -18,3 +18,9 @@ Vue.use(Grid)
 Vue.use(Rate)
 Vue.use(Lazyload)
 Vue.use(ActionSheet)
+Vue.use(Dialog)
+
+Vue.use(Tab)
+Vue.use(Tabs)
+Vue.use(Checkbox)
+Vue.use(Switch)
